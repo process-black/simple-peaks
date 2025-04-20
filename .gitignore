@@ -172,3 +172,18 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+# Python venv
+.venv/
+
+# Byte‑compiled / cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+
+# Jupyter checkpoints
+.ipynb_checkpoints/
+
+# optional: if you output audio files to disk
+*.wav
