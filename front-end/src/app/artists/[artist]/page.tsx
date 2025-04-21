@@ -106,14 +106,14 @@ export default function ArtistPage() {
         preload="auto"
         className="
           fixed inset-0 -z-10 h-screen w-screen object-cover
-          md:static md:w-1/2 md:h-screen
+          md:static md:w-2/3 md:h-screen
         "
       />
 
       {/* 📑 text */}
       <div
         ref={scrollRef}
-        className="relative z-10 w-full flex flex-col items-center md:w-1/2 md:h-screen md:overflow-y-auto"
+        className="relative z-10 w-full flex flex-col items-center md:w-1/3 md:h-screen md:overflow-y-auto"
       >
         {paragraphs.map((para, i) => (
           <section key={i} className="flex flex-col items-center justify-center w-full px-4">
@@ -123,7 +123,7 @@ export default function ArtistPage() {
               }
             >
               <div
-                className="prose prose-invert w-full max-w-none text-lg leading-relaxed drop-shadow-lg m-0 [&_h1]:font-extrabold [&_h1]:text-8xl [&_h1]:font-sans"
+                className="prose prose-invert w-full max-w-none text-lg leading-relaxed drop-shadow-lg m-0 [&_h1]:font-extrabold [&_h1]:text-5xl [&_h1]:font-sans"
                 dangerouslySetInnerHTML={{ __html: marked.parse(para) }}
               />
             </article>
