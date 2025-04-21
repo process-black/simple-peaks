@@ -8,6 +8,7 @@ import shutil
 OUTPUT_540P_MP4 = True      # Save a 540p version of each clip (mp4)
 OUTPUT_540P_GIF = True      # Save a 540px-wide GIF of each clip
 OUTPUT_270P_GIF = True      # Save a 270px-wide GIF of each clip
+OUTPUT_SCROLLING_MP4 = True  # Save a "scrolling" all-I-frames MP4 (1-frame GOP)
 # ---------------------
 
 def check_ffmpeg():
@@ -30,8 +31,9 @@ def extract_clips_from_peaks(peaks_json_path, output_dir=None):
     mp4_540_dir = os.path.join(output_dir, "540")
     gif_540_dir = os.path.join(output_dir, "540_gif")
     gif_270_dir = os.path.join(output_dir, "270_gif")
+    scrolling_dir = os.path.join(output_dir, "scrolling")
     # Ensure all subfolders exist
-    for d in [original_dir, mp4_540_dir, gif_540_dir, gif_270_dir]:
+    for d in [original_dir, mp4_540_dir, gif_540_dir, gif_270_dir, scrolling_dir]:
         os.makedirs(d, exist_ok=True)
 
     for peak in peaks:
@@ -79,6 +81,28 @@ def extract_clips_from_peaks(peaks_json_path, output_dir=None):
             ]
             print(f"Creating 540p mp4: {out_540p_path}")
             subprocess.run(cmd_540p, check=True)
+
+        # Optionally create a scrolling (all-I-frames) MP4
+        if OUTPUT_SCROLLING_MP4:
+            out_scroll_name = os.path.splitext(out_name)[0] + "_scrolling.mp4"
+            out_scroll_path = os.path.join(scrolling_dir, out_scroll_name)
+            cmd_scroll = [
+                "ffmpeg", "-hide_banner", "-loglevel", "error",
+                "-i", out_path,
+                "-c:v", "libx264",
+                "-preset", "veryfast",
+                "-crf", "18",
+                "-g", "1",
+                "-keyint_min", "1",
+                "-sc_threshold", "0",
+                "-pix_fmt", "yuv420p",
+                "-an",
+                "-movflags", "+faststart",
+                "-y",
+                out_scroll_path
+            ]
+            print(f"Creating scrolling all-I-frames mp4: {out_scroll_path}")
+            subprocess.run(cmd_scroll, check=True)
 
         # Optionally create 540px and 270px GIFs
         for width, enabled in [(540, OUTPUT_540P_GIF), (270, OUTPUT_270P_GIF)]:
