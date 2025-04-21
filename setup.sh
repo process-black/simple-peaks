@@ -25,5 +25,5 @@ if ! command -v ffmpeg &> /dev/null; then
   echo "Warning: ffmpeg is not installed or not in PATH. Please install ffmpeg for full functionality."
 fi
 
-echo "Setup complete. To activate the venv, run:"
-echo "  source activate.sh"
+echo "Setup complete. To activate the venv in the future, run:"
+echo "  source .venv/bin/activate"
