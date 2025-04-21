@@ -87,10 +87,13 @@ export default function ArtistPage() {
   }, [artist]);
 
   // Convert markdown to array of paragraphs
-  const paragraphs = markdown
-    .split(/\n\s*\n/)
-    .map((para) => para.trim())
-    .filter(Boolean);
+  const paragraphs = [
+    `# ${artist}`,
+    ...markdown
+      .split(/\n\s*\n/)
+      .map((para) => para.trim())
+      .filter(Boolean)
+  ];
 
   return (
     <main className="relative flex flex-col md:flex-row w-full overflow-x-hidden">
@@ -120,8 +123,8 @@ export default function ArtistPage() {
               }
             >
               <div
-                className="text-lg leading-relaxed drop-shadow-lg m-0"
-                dangerouslySetInnerHTML={{ __html: marked.parseInline(para) }}
+                className="prose prose-invert w-full max-w-none text-lg leading-relaxed drop-shadow-lg m-0 [&_h1]:font-extrabold [&_h1]:text-8xl [&_h1]:font-sans"
+                dangerouslySetInnerHTML={{ __html: marked.parse(para) }}
               />
             </article>
             {i < paragraphs.length - 1 && (
