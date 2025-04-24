@@ -1,6 +1,7 @@
 import argparse
 import sys
 from . import split_audio, find_loud
+from . import split
 
 import math
 import glob
@@ -10,11 +11,9 @@ def main():
     import sys
     import os
     import json
-    from . import split_audio, find_loud
-    from .audio_utils import extract_audio_to_wav
 
     # List of valid subcommands
-    valid_commands = {"split", "find", "analyze", "-h", "--help"}
+    valid_commands = {"split", "find", "analyze", "video-split", "-h", "--help"}
     argv = sys.argv[1:]
     # If first arg is not a known subcommand or help, treat it as a file and run default workflow
     if argv and (argv[0] not in valid_commands and not argv[0].startswith("-")):
@@ -31,7 +30,6 @@ def main():
         window = 2.0
         hop = 0.5
         # Parse any additional options
-        import argparse
         parser = argparse.ArgumentParser()
         parser.add_argument("input")
         parser.add_argument("--sr", type=int, default=None)
@@ -132,7 +130,17 @@ def main():
     analyze_parser.add_argument("--hop", type=float, default=0.5, help="Hop size in seconds for peak analysis")
     analyze_parser.add_argument("--top", type=int, default=10, help="Number of top segments to return")
 
+    # --- Add video-split subcommand ---
+    video_split_parser = subparsers.add_parser('video-split', help='Split a 4K video with 4 corners into 4 1080p videos with mapped audio')
+    video_split_parser.add_argument('input', help='Path to input video file')
+    video_split_parser.add_argument('--output-dir', default='.', help='Directory to write segments (default: current dir)')
+
     args = parser.parse_args()
+
+    # Handle video-split subcommand
+    if getattr(args, 'command', None) == 'video-split':
+        split.split_video(args.input, args.output_dir)
+        return
 
     # If input is provided and no subcommand, run main workflow
     if args.input and not args.command:
@@ -183,6 +191,8 @@ def main():
         )
         import json
         print(json.dumps(segs, indent=2))
+    elif args.command == 'video-split':
+        split.split_video(args.input, args.parts, args.output_dir)
     elif args.command == 'analyze':
         import os
         import json
