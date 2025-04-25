@@ -7,21 +7,22 @@ import math
 import glob
 import soundfile as sf
 
+from .audio_utils import extract_audio_to_wav
+
 def main():
     import sys
     import os
     import json
+    # All necessary imports are at the top of the file
 
     # List of valid subcommands
-    valid_commands = {"split", "find", "analyze", "video-split", "-h", "--help"}
+    valid_commands = {"split", "find", "analyze", "video-split", "video-split-2", "-h", "--help"}
     argv = sys.argv[1:]
     # If first arg is not a known subcommand or help, treat it as a file and run default workflow
     if argv and (argv[0] not in valid_commands and not argv[0].startswith("-")):
         input_path = argv[0]
-        import math
-        import glob
-        import soundfile as sf
         base = os.path.splitext(os.path.basename(input_path))[0]
+        parent_folder = os.path.dirname(input_path)
         out_dir = os.path.join(os.path.dirname(input_path), f"{base}.simple-peaks")
         os.makedirs(out_dir, exist_ok=True)
         # Default values
@@ -67,7 +68,6 @@ def main():
             offset += dur
         # Build a flat array of peaks with absolute positions
         all_peaks = []
-        import soundfile as sf
         for i, wav in enumerate(wavs):
             # Detect sample rate if not set
             _sr = sr
@@ -135,19 +135,27 @@ def main():
     video_split_parser.add_argument('input', help='Path to input video file')
     video_split_parser.add_argument('--output-dir', default='.', help='Directory to write segments (default: current dir)')
 
+    # --- Add video-split-2 subcommand ---
+    video_split2_parser = subparsers.add_parser('video-split-2', help='Split a 4K video using split2.py logic')
+    video_split2_parser.add_argument('input', help='Path to input video file')
+    video_split2_parser.add_argument('--output-dir', default='.', help='Directory to write segments (default: current dir)')
+
     args = parser.parse_args()
 
     # Handle video-split subcommand
     if getattr(args, 'command', None) == 'video-split':
         split.split_video(args.input, args.output_dir)
         return
+    # Handle video-split-2 subcommand
+    if getattr(args, 'command', None) == 'video-split-2':
+        from . import split2
+        split2.split_video(args.input, args.output_dir)
+        return
 
     # If input is provided and no subcommand, run main workflow
     if args.input and not args.command:
         import os
         import json
-        from . import split_audio, find_loud
-        from .audio_utils import extract_audio_to_wav
         # 1. Create output folder
         input_path = args.input
         base = os.path.splitext(os.path.basename(input_path))[0]

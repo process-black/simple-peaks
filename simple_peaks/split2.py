@@ -10,10 +10,10 @@ import subprocess
 
 # Configuration: map corners to audio channel indices (0-based)
 CONFIG = {
-    'top_left': 6,        # e.g., channel 1
-    'top_right': 2,       # e.g., channel 2
-    'bottom_left': 4,     # e.g., channel 3
-    'bottom_right': 9    # e.g., channel 4
+    'top_left': 2,        # e.g., channel 1
+    'top_right': 9,       # e.g., channel 2
+    'bottom_left': 10,     # e.g., channel 3
+    'bottom_right': 2    # e.g., channel 4
 }
 
 

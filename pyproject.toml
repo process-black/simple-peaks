@@ -21,3 +21,6 @@ dependencies = [
 
 [project.scripts]
 simple-peaks = "simple_peaks.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["simple_peaks"]
